@@ -1,7 +1,12 @@
 from xlrd import open_workbook
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+import argparse
 
+parser = argparse.ArgumentParser(description='Transform xls to doc')
+parser.add_argument("--src")
+args = parser.parse_args()
+src = args.src
 
 def copy_data(src_sheet, dest_doc):
     dest_doc.add_paragraph('\n' + src_sheet.name)
@@ -18,7 +23,6 @@ def copy_data(src_sheet, dest_doc):
     hdr_cells[6].text = 'Примечание'
     
     for index_row in range(src_sheet.nrows):
-        print(index_row)
         data_row = src_sheet.row_values(index_row)
         row_cells = table.rows[index_row+1].cells
         row_cells[0].text = str(index_row+1)
@@ -31,12 +35,10 @@ def copy_data(src_sheet, dest_doc):
 
     return dest_doc
 
-source_filename = './primer_ishod.xls'
-
 document = Document()
 document.add_paragraph('Исходные данные').alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-read_book = open_workbook(source_filename, on_demand=True)
+read_book = open_workbook(src, on_demand=True)
 
 for index_sheet in range(read_book.nsheets):
     read_sheet = read_book.get_sheet(index_sheet)
